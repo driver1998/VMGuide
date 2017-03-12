@@ -137,7 +137,7 @@ namespace VMGuide
                     Console.WriteLine("This Virtual Machine is Locked by your hypervisor, exit your hypervisor and try again.");
                     break;
                 case Errors.WrongCommand:
-                    Help();
+                    Help(command);
                     break;
                 case Errors.WrongSet:
                     Help_Set();
