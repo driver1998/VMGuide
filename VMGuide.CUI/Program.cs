@@ -22,8 +22,8 @@ namespace VMGuide
             FileLocked
         }
 
-        static VirtualMachine CurrentVM; //实际为VM的子类
-        static List<VirtualMachine> VMList; //VM本身的List
+        static VirtualMachine CurrentVM;
+        static List<VirtualMachine> VMList;
         static bool UnattendMode = false;
 
         static void Main(string[] args)
@@ -32,12 +32,8 @@ namespace VMGuide
 
             if (args.GetLength (0)>0)
             {
-                //无人值守模式
-                //如果第一个参数是个文件路径，视为脚本
-                //如果不是，视为命令块 分号分割
                 if (File.Exists(args[0]))
                 {
-                    //InStream = File.Open(, FileMode.Open, FileAccess.Read, FileShare.Read);
                     In = File.OpenText(args[0]);
                 }
                 else
@@ -60,15 +56,16 @@ namespace VMGuide
 
         }
 
-        static Errors CommandPrompt() //处理命令行
+        static Errors CommandPrompt() //Process sommands
         {
-            var ret = Errors.Complete; //返回到Main的返回值 只有EXIT和COMPLETE
-            var val = Errors.Unknown; //命令返回的返回值
+            var ret = Errors.Complete; //Return value to the OS, EXIT or COMPLETE
+            var val = Errors.Unknown; //Return value from commands
 
             if (!UnattendMode) Console.Write( Environment.NewLine + "VMGuide> ");
 
-            var command = Console.ReadLine().ToLower();
+            var command = Console.ReadLine();
             if (command == null) command = "exit";
+            command = command.ToLower();
 
             char[] s = { ' ' }; string[] split = command.Split(s);
             if (split[0] != "")
@@ -173,7 +170,7 @@ namespace VMGuide
             return Errors.Complete;
         }
 
-        static Errors List() //显示事先搜索到的虚拟机
+        static Errors List() //Show VM LIST
         {
             for (int i=0;i<VMList.Count;i++)
             {
@@ -279,7 +276,7 @@ namespace VMGuide
         }
        
 
-        static Errors Select(string command) //由文件名或ID确定配置文件 创建VM对象
+        static Errors Select(string command)
         {
             Regex regex = new Regex("(?:select|sel) (?:id=(\\d+)|file=\"(.*?)\")");
             var ret = Errors.WrongCommand;
@@ -313,7 +310,7 @@ namespace VMGuide
             return (ret);     
         }
 
-        static Errors  DetectAndOpen(string file) //根据扩展名 初始化相应的子类
+        static Errors  DetectAndOpen(string file) //Detect file type, and open
         {
             var ret = Errors.FileNotFound;
 

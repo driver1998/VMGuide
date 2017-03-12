@@ -8,11 +8,11 @@ using System.Windows;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("VMGuide")]
-[assembly: AssemblyDescription("Beta, Build 20170101")]
+[assembly: AssemblyDescription("Build 20170312")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VMGuide")]
-[assembly: AssemblyCopyright("Copyright (c) 2010-2017 BetaNewbie")]
+[assembly: AssemblyCopyright("Copyright (c) 2010-2017 driver1998")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
