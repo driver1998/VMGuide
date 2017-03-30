@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
@@ -114,6 +115,20 @@ namespace VMGuide
 
             list_nic.ItemsSource = CurrentVMwareNICs;
             list_nic.SelectedItem = null;
+        }
+
+        private void check_biosdate_Checked(object sender, RoutedEventArgs e)
+        {
+            CurrentVM.DateLock = true;
+            var binding = new Binding("CurrentVM.BIOSDate");
+            binding.Source = MainPage;
+            datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
+        }
+
+        private void check_biosdate_Unchecked(object sender, RoutedEventArgs e)
+        {
+            BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
+            CurrentVM.DateLock = false;
         }
     }
 }

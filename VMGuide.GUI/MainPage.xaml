@@ -268,8 +268,9 @@
             </Style.Triggers>
         </Style>
     </Page.Resources>
+    
     <Grid>
-        <Border BorderBrush="#184689" Margin="5">
+        <Border BorderBrush="#184689" Margin="5" BorderThickness="2">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" Direction="-90" ShadowDepth="0"/>
             </Border.Effect>
@@ -359,11 +360,11 @@
                                         Visibility="{Binding ElementName=radio_bios,Path=IsChecked,Converter={StaticResource BooleanToCollapseConverter }}" 
                                         IsEnabled="{Binding ElementName=MainPage ,Path=CurrentVM.IsLocked,Converter={StaticResource BooleanReverseConverter}}">
                             <TextBlock Text="{Binding ElementName=radio_bios,Path=Content}" Style="{StaticResource GroupTitle}"/>
-                            <CheckBox x:Name="check_biosdate" Content="BIOS Date Lock" IsChecked="{Binding ElementName=MainPage ,Path=CurrentVM.DateLock}"/>
-                            <DatePicker VerticalContentAlignment="Center" 
+                            <CheckBox x:Name="check_biosdate" Content="BIOS Date Lock" Checked="check_biosdate_Checked" Unchecked="check_biosdate_Unchecked"/>
+                            <DatePicker VerticalContentAlignment="Center"  x:Name="datepicker"
                                         IsEnabled="{Binding ElementName=check_biosdate, Path=IsChecked}"
                                             Visibility="{Binding ElementName=check_biosdate ,Path=IsChecked,Converter={StaticResource BooleanToCollapseConverter}}"
-                                            Uid="BIOS Date" SelectedDate="{Binding ElementName=MainPage ,Path=CurrentVM.BIOSDate}" />
+                                            Uid="BIOS Date"/>
                             <CheckBox Content="ACPI Enabled" IsChecked="{Binding ElementName=MainPage ,Path=CurrentVM.ACPI}"
                                       Visibility="{Binding ElementName=MainPage,Path=IsVirtualPC,Converter={StaticResource BooleanReverseToCollapseConverter}}"/>
                         </StackPanel>
