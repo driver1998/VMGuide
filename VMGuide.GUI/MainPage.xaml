@@ -215,6 +215,7 @@
             </Style.Triggers>
         </Style>
         <Style TargetType="DatePicker" >
+
             <Setter Property="Height" Value="87"/>
             <Setter Property="Template" >
                 <Setter.Value >
@@ -265,6 +266,9 @@
                 <Trigger Property="IsMouseOver" Value="true">
                     <Setter Property="BorderBrush" Value="#666666" />
                 </Trigger>
+                <DataTrigger Binding="{Binding ElementName=check_biosdate, Path=IsChecked}" Value="true">
+                    <Setter Property="SelectedDate" Value="{Binding ElementName=MainPage, Path=CurrentVM.BIOSDate}"/>
+                </DataTrigger>
             </Style.Triggers>
         </Style>
     </Page.Resources>
@@ -360,11 +364,12 @@
                                         Visibility="{Binding ElementName=radio_bios,Path=IsChecked,Converter={StaticResource BooleanToCollapseConverter }}" 
                                         IsEnabled="{Binding ElementName=MainPage ,Path=CurrentVM.IsLocked,Converter={StaticResource BooleanReverseConverter}}">
                             <TextBlock Text="{Binding ElementName=radio_bios,Path=Content}" Style="{StaticResource GroupTitle}"/>
-                            <CheckBox x:Name="check_biosdate" Content="BIOS Date Lock" Checked="check_biosdate_Checked" Unchecked="check_biosdate_Unchecked"/>
+                            <CheckBox x:Name="check_biosdate" IsChecked="{Binding ElementName=MainPage, Path=CurrentVM.DateLock}" Content="BIOS Date Lock" Checked="check_biosdate_Checked" Unchecked="check_biosdate_Unchecked"/>
                             <DatePicker VerticalContentAlignment="Center"  x:Name="datepicker"
                                         IsEnabled="{Binding ElementName=check_biosdate, Path=IsChecked}"
                                             Visibility="{Binding ElementName=check_biosdate ,Path=IsChecked,Converter={StaticResource BooleanToCollapseConverter}}"
-                                            Uid="BIOS Date"/>
+                                            Uid="BIOS Date">
+                            </DatePicker>
                             <CheckBox Content="ACPI Enabled" IsChecked="{Binding ElementName=MainPage ,Path=CurrentVM.ACPI}"
                                       Visibility="{Binding ElementName=MainPage,Path=IsVirtualPC,Converter={StaticResource BooleanReverseToCollapseConverter}}"/>
                         </StackPanel>

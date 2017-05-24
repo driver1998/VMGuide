@@ -119,16 +119,16 @@ namespace VMGuide
 
         private void check_biosdate_Checked(object sender, RoutedEventArgs e)
         {
-            CurrentVM.DateLock = true;
-            var binding = new Binding("CurrentVM.BIOSDate");
-            binding.Source = MainPage;
-            datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
+            //CurrentVM.DateLock = true;
+            //var binding = new Binding("CurrentVM.BIOSDate");
+            //binding.Source = MainPage;
+            //datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
         }
 
         private void check_biosdate_Unchecked(object sender, RoutedEventArgs e)
         {
-            BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
-            CurrentVM.DateLock = false;
+            //BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
+            //CurrentVM.DateLock = false;
         }
     }
 }
