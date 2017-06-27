@@ -55,7 +55,7 @@ namespace VMGuide
             set
             {
                 if (Path == null || IsLocked) return;
-                var TimeOffset =(int)((value - DateTime.Now).TotalMilliseconds);
+                var TimeOffset =(long)((value - DateTime.Now).TotalMilliseconds);
                 XML.WriteAttribute(@"VirtualBox/Machine/Hardware/BIOS/TimeOffset", "value", TimeOffset.ToString());
             }
         } 
