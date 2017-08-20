@@ -69,7 +69,7 @@ namespace VMGuide
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("home.xaml", UriKind.Relative));
+            NavigationService?.Navigate(new Uri("home.xaml", UriKind.Relative));
         }
 
         private void TitleBar_MouseMove(object sender, MouseEventArgs e)
@@ -119,16 +119,29 @@ namespace VMGuide
 
         private void check_biosdate_Checked(object sender, RoutedEventArgs e)
         {
-            //CurrentVM.DateLock = true;
-            //var binding = new Binding("CurrentVM.BIOSDate");
-            //binding.Source = MainPage;
-            //datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
+            if (datepicker == null) return;
+            CurrentVM.DateLock = true;
+            var binding = new Binding("CurrentVM.BIOSDate");
+            binding.Source = MainPage;
+            datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
         }
 
         private void check_biosdate_Unchecked(object sender, RoutedEventArgs e)
         {
-            //BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
-            //CurrentVM.DateLock = false;
+            if (datepicker == null) return;
+            BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
+            CurrentVM.DateLock = false;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            check_biosdate.Checked -= check_biosdate_Checked;
+            check_biosdate.Unchecked -= check_biosdate_Unchecked;
+
+            check_biosdate.IsChecked = CurrentVM.DateLock;
+
+            check_biosdate.Checked += check_biosdate_Checked;
+            check_biosdate.Unchecked += check_biosdate_Unchecked;
         }
     }
 }

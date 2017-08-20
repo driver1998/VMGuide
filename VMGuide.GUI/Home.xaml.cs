@@ -192,7 +192,7 @@ namespace VMGuide
                 }
             }
 
-            NavigationService.Navigate(new Uri("mainpage.xaml", UriKind.Relative));
+            NavigationService?.Navigate(new Uri("mainpage.xaml", UriKind.Relative));
 
             if (UnattendedMode.Value)
             {
