@@ -16,11 +16,14 @@ namespace VMGuide
     {
         private static VirtualMachine VM;
 
+        //返回当前的虚拟机
         public static VirtualMachine CurrentVM
         {
             get { return VM; }
             set { VM = value; }
         }
+
+        //返回当前的VMwareVM
         public static VMwareVM CurrentVMwareVM
         {
             get
@@ -32,6 +35,8 @@ namespace VMGuide
                 if (value is VMwareVM) { VM = value; } else { return; }
             }
         }
+
+        //当前虚拟机的网卡列表
         public static ObservableCollection<string> CurrentVMwareNICs
         {
             get
@@ -69,7 +74,8 @@ namespace VMGuide
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService?.Navigate(new Uri("home.xaml", UriKind.Relative));
+            VM = null;
+            if (NavigationService.CanGoBack) NavigationService?.GoBack();
         }
 
         private void TitleBar_MouseMove(object sender, MouseEventArgs e)
@@ -82,6 +88,8 @@ namespace VMGuide
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //ComboBox在选中的要修改的那个ListBoxItem内
+            
             int ComboBoxSel = ((ComboBox)sender).SelectedIndex;
             int ListBoxSel = list_nic.SelectedIndex;
             if (ComboBoxSel == -1 || ListBoxSel == -1) return;
@@ -117,6 +125,19 @@ namespace VMGuide
             list_nic.SelectedItem = null;
         }
 
+        /* 
+         * VirtualBox的DateLock由TimeOffest(BIOSDate与当前时间的差值)决定
+         * TimeOffest!=0 --> DateLock=true
+         * TimeOffest==0 --> DateLock=false
+         * 
+         * DateLock只能set为false，即将TimeOffest设为0
+         * true会被直接忽略
+         * 
+         * 所以直接写死数据绑定，会导致DateLock开关直接点不了
+         * 
+         * 所以DateLock只能用事件手动写值
+         * 然后DateLock为true的时候再建立与TimeOffest(BIOSDate)的数据绑定
+        */
         private void check_biosdate_Checked(object sender, RoutedEventArgs e)
         {
             if (datepicker == null) return;

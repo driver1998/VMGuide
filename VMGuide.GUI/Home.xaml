@@ -167,7 +167,7 @@
                 <Image x:Name="image" HorizontalAlignment="Left" Width="60" Margin="15,5,0,15" Source="Resources\logo.png"/>
                 <Label x:Name="label" VerticalAlignment="Top" Height="40" Margin="85,5,10,0"  
                        Foreground="White" FontFamily="Microsoft Yahei Light" VerticalContentAlignment="Center" 
-                       Padding="0" IsEnabled="{Binding ElementName=HomePage,Path=UnattendedMode.Value}">
+                       Padding="0" IsEnabled="{Binding ElementName=HomePage,Path=IsUnattendMode.Value}">
                     <Label.Style >
                         <Style TargetType="Label" >
                             <Style.Triggers >
@@ -181,7 +181,6 @@
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
-
                     </Label.Style>
                 </Label>
                 <Label x:Name="label1" Margin="85,45,10,15"  Foreground="White" 
@@ -192,7 +191,7 @@
 
             <ScrollViewer Margin="50,30,50,30" Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0">
-                    <Grid Margin="5" Visibility="{Binding ElementName=HomePage,Path=UnattendedMode.Value,Converter={StaticResource BooleanToCollapseConverter } }">
+                    <Grid Margin="5" Visibility="{Binding ElementName=HomePage,Path=IsUnattendMode.Value,Converter={StaticResource BooleanToCollapseConverter } }">
                         <Label x:Name ="ImportPrompt" Content="Importing setting: BIOSDate 20160101" HorizontalAlignment="Left" FontSize="12"/>
                         <Button x:Name="ImportCancel" Content=" Cancel " Width="auto" HorizontalAlignment="Right" HorizontalContentAlignment="center" Click="ImportCancel_Click">
                             <Button.Style>

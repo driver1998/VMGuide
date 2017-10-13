@@ -18,72 +18,41 @@ namespace VMGuide
         private static ObservableCollection<VirtualMachine> VMware_OC = new ObservableCollection<VirtualMachine>();
         private static ObservableCollection<VirtualMachine> VirtualPC_OC = new ObservableCollection<VirtualMachine>();
         private static ObservableCollection<VirtualMachine> VBox_OC = new ObservableCollection<VirtualMachine>();
-        private static Mode unattend = new Mode();
 
-        public static ObservableCollection<VirtualMachine> VMware_Collection
-        {
-            get { return VMware_OC; }
-            set { VMware_OC = value; }
-        }
-        public static ObservableCollection<VirtualMachine> VirtualPC_Collection
-        {
-            get { return VirtualPC_OC; }
-            set { VirtualPC_OC = value; }
-        }
-        public static ObservableCollection<VirtualMachine> VBox_Collection
-        {
-            get { return VBox_OC; }
-            set { VBox_OC = value; }
-        }
-        public static Mode UnattendedMode
-        {
-            get { return unattend; }
-            set { unattend = value; }
-        }
+        public static ObservableCollection<VirtualMachine> VMware_Collection => VMware_OC;
+        public static ObservableCollection<VirtualMachine> VirtualPC_Collection => VirtualPC_OC;
+        public static ObservableCollection<VirtualMachine> VBox_Collection => VBox_OC;
 
-        //for UnattendMode
-        public static ImportType typeU;
-        public static bool boolU;
-        public static DateTime dateU;
+        private static NotifyChanged<bool> unattend;
+        public static NotifyChanged<Boolean> IsUnattendMode
+        {
+            get
+            {
+                if (unattend == null)
+                    unattend = new NotifyChanged<bool>(App.unattendMode != null);
 
+                return unattend;
+            }
+        }
+        
         public static string PreLoadFile;
 
         public Home()
         {
             InitializeComponent();
-
-            Refresh();
-
-            if (UnattendedMode.Value)
-            {
-                string FriendlyTypeU = "", FriendlyValue = "";
-
-                switch (typeU)
-                {
-                    case ImportType.biosdate:
-                        FriendlyTypeU = "BIOS Date";
-                        FriendlyValue = dateU.ToShortDateString();
-                        break;
-
-                    case ImportType.acpi:
-                        FriendlyTypeU = "ACPI";
-                        FriendlyValue = boolU.ToString();
-                        break;
-
-                    case ImportType.datelock:
-                        FriendlyTypeU = "BIOS Date Lock";
-                        FriendlyValue = boolU.ToString();
-                        break;
-                }
-
-                ImportPrompt.Content = "Ready to Import: " + FriendlyTypeU + " " + FriendlyValue;
-            }
-
         }
 
 
         private void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
+
+            Refresh();
+
+            if (IsUnattendMode.Value)
+            {
+                ImportPrompt.Content = "Ready to Import: " + UnattendMode.Types[App.unattendMode.Type] + " " + App.unattendMode.Value;
+            }
+
             if (PreLoadFile != null)
             {
                 DetectAndOpen(PreLoadFile);
@@ -142,11 +111,12 @@ namespace VMGuide
             }
         }
 
+        //按照文件后缀判断格式并打开
         private void DetectAndOpen(string file)
         {
             VirtualMachine VM = null;
 
-            switch (System.IO.Path.GetExtension(file))
+            switch (Path.GetExtension(file))
             {
                 case ".vmx":
                     VM = new VMwareVM(file);
@@ -164,46 +134,41 @@ namespace VMGuide
             if (VM != null) OpenVM(VM);
         }
 
+
         private void OpenVM(VirtualMachine VM)
         {
+            //自动备份
             if (File.Exists(VM.Path + ".VMGuide")) File.Delete(VM.Path + ".VMGuide");
             File.Copy(VM.Path, VM.Path + ".VMGuide");
 
-            Main.CurrentVM = VM;
-            if (UnattendedMode.Value)
+            //无人值守模式
+            if (IsUnattendMode.Value)
             {
-                if (VM.IsLocked)
+                try
                 {
-                    MessageBox.Show("This Virtual Machine is Locked by your hypervisor, exit your hypervisor and try again.","VMGuide",MessageBoxButton.OK,MessageBoxImage.Exclamation);
-                    return;
+                    App.unattendMode.Execute(VM);
                 }
-
-                switch (typeU)
+                catch (UnauthorizedAccessException e)
                 {
-                    case ImportType.datelock:
-                        Main.CurrentVM.DateLock = boolU;
-                        break;
-                    case ImportType.biosdate:
-                        Main.CurrentVM.BIOSDate = dateU;
-                        break;
-                    case ImportType.acpi:    
-                        Main.CurrentVM.ACPI = boolU;
-                        break;
+                    MessageBox.Show(e.Message, "VMGuide", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
 
+            Main.CurrentVM = VM;
             NavigationService?.Navigate(new Uri("mainpage.xaml", UriKind.Relative));
 
-            if (UnattendedMode.Value)
+            if (IsUnattendMode.Value)
             {
-                UnattendedMode.Value = false;
+                IsUnattendMode.Value = false;
+                App.unattendMode = null;
                 MessageBox.Show("Settings updated successfully.","",MessageBoxButton.OK ,MessageBoxImage.Information);
             }
         }
 
         private void ImportCancel_Click(object sender, RoutedEventArgs e)
         {
-            UnattendedMode.Value = false;
+            IsUnattendMode.Value = false;
+            App.unattendMode = null;
         }
         
 
