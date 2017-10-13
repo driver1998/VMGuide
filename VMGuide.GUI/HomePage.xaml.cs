@@ -12,16 +12,12 @@ namespace VMGuide
     /// <summary>
     /// Page1.xaml 的交互逻辑
     /// </summary>
-    public partial class Home : Page
+    public partial class HomePage : Page
     {
 
-        private static ObservableCollection<VirtualMachine> VMware_OC = new ObservableCollection<VirtualMachine>();
-        private static ObservableCollection<VirtualMachine> VirtualPC_OC = new ObservableCollection<VirtualMachine>();
-        private static ObservableCollection<VirtualMachine> VBox_OC = new ObservableCollection<VirtualMachine>();
-
-        public static ObservableCollection<VirtualMachine> VMware_Collection => VMware_OC;
-        public static ObservableCollection<VirtualMachine> VirtualPC_Collection => VirtualPC_OC;
-        public static ObservableCollection<VirtualMachine> VBox_Collection => VBox_OC;
+        private ObservableCollection<VirtualMachine> VMware_OC = new ObservableCollection<VirtualMachine>();
+        private ObservableCollection<VirtualMachine> VirtualPC_OC = new ObservableCollection<VirtualMachine>();
+        private ObservableCollection<VirtualMachine> VBox_OC = new ObservableCollection<VirtualMachine>();
 
         private static NotifyChanged<bool> unattend;
         public static NotifyChanged<Boolean> IsUnattendMode
@@ -37,7 +33,7 @@ namespace VMGuide
         
         public static string PreLoadFile;
 
-        public Home()
+        public HomePage()
         {
             InitializeComponent();
         }
@@ -45,6 +41,8 @@ namespace VMGuide
 
         private void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
+
+
 
             Refresh();
 
@@ -58,7 +56,10 @@ namespace VMGuide
                 DetectAndOpen(PreLoadFile);
                 PreLoadFile = null;
             }
-            
+
+            listbox_vbox.ItemsSource = VBox_OC;
+            listbox_vmx.ItemsSource = VMware_OC;
+            listbox_vpc.ItemsSource = VirtualPC_OC;
         }
 
         private void Refresh()
@@ -93,6 +94,10 @@ namespace VMGuide
         {
             if (((ListBox)sender).SelectedItem == null) return;
             OpenVM ( (VirtualMachine)((ListBox)sender).SelectedItem );
+
+            ((ListBox)sender).SelectionChanged -= VMLists_SelectionChanged;
+            ((ListBox)sender).SelectedItem = null;
+            ((ListBox)sender).SelectionChanged += VMLists_SelectionChanged;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -154,7 +159,7 @@ namespace VMGuide
                 }
             }
 
-            Main.CurrentVM = VM;
+            MainPage.CurrentVM = VM;
             NavigationService?.Navigate(new Uri("mainpage.xaml", UriKind.Relative));
 
             if (IsUnattendMode.Value)

@@ -5,4 +5,5 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"     AllowsTransparency="True" Background="Transparent"
-        Title="VMGuide" Height="500" Width="700" SnapsToDevicePixels="True" Source="home.xaml" ShowsNavigationUI="False" WindowStyle="None"   />
+        Title="VMGuide" Height="500" Width="700" SnapsToDevicePixels="True" Source="homepage.xaml" ShowsNavigationUI="False" WindowStyle="None"   />
+

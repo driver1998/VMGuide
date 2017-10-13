@@ -3,5 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VMGuide"
              StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <local:BooleanToCollapseConverter x:Key="BooleanToCollapseConverter"/>
+            <local:BooleanReverseConverter x:Key="BooleanReverseConverter"/>
+            <local:BooleanReverseToCollapseConverter x:Key="BooleanReverseToCollapseConverter"/>
+            
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
 </Application>
     

@@ -1,0 +1,189 @@
+﻿<Page x:Name="page_home" x:Class="VMGuide.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:VMGuide"
+      mc:Ignorable="d" Background="Transparent"
+      d:DesignHeight="500" d:DesignWidth="700"
+      Title="Page1" Loaded="HomePage_Loaded">
+
+    <Page.Resources>
+        <Style TargetType="Grid" x:Key="GridList" >
+            <Setter Property="Grid.RowSpan" Value ="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="OpacityMask" Value="Black" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="#f2f2f2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Label" x:Key="GridLabel">
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Top"  />
+            <Setter Property="Margin" Value="10,10,10,10 "/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style TargetType="ListBoxItem" x:Key="MenuListBoxItem">
+            <Setter Property="Margin"  Value="0,0,0,0"/>
+            <Setter Property="Padding" Value="5,5,5,5"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value >
+                    <ControlTemplate TargetType="ListBoxItem" >
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Margin ="{TemplateBinding Margin}" Height="30">
+                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment }"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}"
+                                              Margin="{TemplateBinding Padding}" 
+                                              TextBlock.FontSize="13"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers >
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background"  Value="#dadada" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="ListBox" x:Key="GridListBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="130,10,10,10"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource MenuListBoxItem}"/>
+            <Setter Property="Template" >
+                <Setter.Value >
+                    <ControlTemplate TargetType="ListBox" >
+                        <StackPanel IsItemsHost="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Border BorderBrush="#184689" Margin="5" BorderThickness="2">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="5" Direction="-90" ShadowDepth="0"/>
+            </Border.Effect>
+        </Border>
+        <Grid Background="White" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition/>
+                <RowDefinition Height="48"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="TitleBar" Grid.Row="0" Grid.RowSpan="1" Background="#184689" MouseMove="TitleBar_MouseMove" >
+                <Button HorizontalAlignment="Right" VerticalAlignment="Top" 
+                        Content="&#xE106;"  Click="CloseButton_Click"   Style="{StaticResource TitleBarCloseButtonStyle}"/>
+
+                <Button Margin="0,0,48,0" HorizontalAlignment="Right" VerticalAlignment="Top"  
+                        Content="&#xE108;" Click="MinimizeButton_Click" Style="{StaticResource TitleBarButtonStyle}">
+                </Button>
+            </Grid>
+
+            <Grid Margin="0,0,0,0" Background="#184689" Grid.Row="1" >
+                <Image x:Name="image" HorizontalAlignment="Left" Width="60" Margin="15,5,0,15" Source="Resources\logo.png"/>
+                <Label x:Name="label" VerticalAlignment="Top" Height="40" Margin="85,5,10,0"  
+                       Foreground="White" FontFamily="Microsoft Yahei Light" VerticalContentAlignment="Center" 
+                       Padding="0" IsEnabled="{Binding ElementName=page_home,Path=IsUnattendMode.Value}">
+                    <Label.Style >
+                        <Style TargetType="Label" >
+                            <Style.Triggers >
+                                <Trigger Property="IsEnabled" Value="true">
+                                    <Setter Property="FontSize" Value="30"/>
+                                    <Setter Property="Content" Value="Importing Settings"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="FontSize" Value="35"/>
+                                    <Setter Property="Content" Value="Welcome"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
+                <Label x:Name="label1" Margin="85,45,10,15"  Foreground="White" 
+                       Content="To Continue, please select a virtual machine."  
+                       FontFamily="Microsoft Yahei Light" FontSize="14" 
+                       VerticalContentAlignment="Center" Padding="2,0" />
+            </Grid>
+
+            <ScrollViewer Margin="50,30,50,30" Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0">
+                    <Grid Margin="5" Visibility="{Binding ElementName=page_home,Path=IsUnattendMode.Value,Converter={StaticResource BooleanToCollapseConverter } }">
+                        <Label x:Name ="ImportPrompt" Content="Importing setting: BIOSDate 20160101" HorizontalAlignment="Left" FontSize="12"/>
+                        <Button x:Name="ImportCancel" Style="{StaticResource TextButtonStyle}" Content="Cancel" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Click="ImportCancel_Click"/>
+
+                    </Grid>
+
+
+                    <Grid x:Name="grid_vpc" Height="Auto" Style="{StaticResource GridList }" 
+                          Visibility="{Binding ElementName=listbox_vpc,Path=HasItems,Converter={StaticResource BooleanToCollapseConverter} }">
+
+                        <Label Content="Virtual PC" Style="{StaticResource GridLabel }" 
+                               Background="{Binding ElementName=grid_vpc,Path=Background}"/>
+                        <ListBox x:Name="listbox_vpc" Style="{StaticResource GridListBox }" 
+                                 Background="{Binding ElementName=grid_vpc,Path=Background}"
+                                 SelectionChanged="VMLists_SelectionChanged"/>
+                    </Grid>
+
+                    <Grid x:Name="grid_vmx" Height="Auto" Style="{StaticResource GridList}" 
+                          Visibility="{Binding ElementName=listbox_vmx,Path=HasItems,Converter={StaticResource BooleanToCollapseConverter} }">
+
+                        <Label Content="VMware" Style="{StaticResource GridLabel}" 
+                               Background="{Binding ElementName=grid_vmx,Path=Background}" />
+                        <ListBox x:Name="listbox_vmx" Style="{StaticResource GridListBox}" 
+                                 Background="{Binding ElementName=grid_vmx,Path=Background}"
+                                 SelectionChanged="VMLists_SelectionChanged"/>
+                    </Grid>
+
+                    <Grid x:Name="grid_vbox" Height="Auto" Style="{StaticResource GridList }" 
+                          Visibility="{Binding ElementName=listbox_vbox,Path=HasItems,Converter={StaticResource BooleanToCollapseConverter} }">
+
+                        <Label Content="VirtualBox" Style="{StaticResource GridLabel }" 
+                               Background="{Binding ElementName=grid_vbox,Path=Background}" />
+                        <ListBox x:Name="listbox_vbox" Style="{StaticResource GridListBox }" 
+                                 Background="{Binding ElementName=grid_vbox,Path=Background}"
+                                 SelectionChanged="VMLists_SelectionChanged"/>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="3" Margin="0,0,0,0" Background="#f2f2f2" Orientation="Horizontal" >
+                <ToggleButton x:Name="settingsToggle" Width="68" Height="48"
+                              HorizontalAlignment="Right" VerticalAlignment="Top" Content="&#xE713;" 
+                              FontSize="18" Style="{StaticResource ToolBarToggleStyle }"
+                              IsHitTestVisible="{Binding ElementName=settingsPopup, Path=IsOpen ,Converter={StaticResource BooleanReverseConverter}}"/>
+                
+                <Button Width="68" Margin="0,0,68,0" 
+                        HorizontalAlignment="Right" Content="&#xE109;"
+                        FontSize="18" Style="{StaticResource ToolBarButtonStyle  }" Click="Button_Click"/>
+            </StackPanel>
+            
+            <Popup x:Name="settingsPopup" StaysOpen="False"
+                   IsOpen="{Binding ElementName=settingsToggle ,Path=IsChecked}"
+                   Placement="Top" PlacementTarget="{Binding ElementName=settingsToggle}">
+                
+                <ListBox Width="{Binding ElementName=settingsToggle,Path=Width}">
+                    <ListBoxItem Content="Refresh" MouseUp="RefreshMenuClicked"/>
+                    <ListBoxItem Content="About" MouseUp="AboutMenuClicked"/>
+                </ListBox>
+            </Popup>
+
+
+        </Grid>
+    </Grid>
+</Page>

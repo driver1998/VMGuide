@@ -33,7 +33,7 @@ namespace VMGuide
                     }
                     else if (File.Exists(args[0]))
                     {
-                        Home.PreLoadFile = args[0];
+                        HomePage.PreLoadFile = args[0];
                     }
                 }
 

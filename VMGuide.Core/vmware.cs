@@ -289,45 +289,71 @@ namespace VMGuide
 
     public class VMware
     {
-        public static string[] Firmwares = { "bios", "efi" };
-        static string[] fw_des = { "BIOS", "UEFI" };
-
-        public static string[] SoundCards = { "sb16", "es1371", "hdaudio", "none" };
-        static string[] snd_des = { "Sound Blaster 16", "Sound Blaster PCI", "HD Audio", "None" };
-
-        public static string[] NICs = { "vlance", "e1000", "e1000e", "vmxnet", "vmxnet3" };
-        static string[] nic_des = { "AMD PCnet", "Intel E1000", "Intel E1000e", "VMware VMXNet", "VMware VMXNet3" };
-
-
-        public static string ValueToDescripton(string value)
+        private static Dictionary<string, string> firmwares;
+        public static Dictionary<string, string> Firmwares
         {
-            int index = -1, i;
-            string ret = value;
-
-            for (i = 0; i < 3; i++)
+            get
             {
-                switch (i)
+                if (firmwares == null)
                 {
-                    case 0:
-                        index = Array.IndexOf(Firmwares, value.ToLower());
-                        if (index != -1) ret = fw_des[index];
-                        break;
-                    case 1:
-                        index = Array.IndexOf(SoundCards, value.ToLower());
-                        if (index != -1) ret = snd_des[index];
-                        break;
-                    case 2:
-                        index = Array.IndexOf(NICs, value.ToLower());
-                        if (index != -1) ret = nic_des[index];
-                        break;
+                    firmwares = new Dictionary<string, string>()
+                    {
+                        {"bios" ,"BIOS"},
+                        {"efi"  ,"UEFI"},
+                    };
                 }
-
-                if (index != -1) break;
+                return firmwares;
             }
-            
-            return ret;
         }
 
+        private static Dictionary<string, string> soundcards;
+        public static Dictionary<string, string> SoundCards
+        {
+            get
+            {
+                if (soundcards == null)
+                {
+                    soundcards = new Dictionary<string, string>()
+                    {
+                        {"sb16"     ,"Sound Blaster 16"},
+                        {"es1371"   ,"Sound Blaster PCI ES1371"},
+                        {"hdaudio"  ,"HD Audio"},
+                        {"none"     ,"None"},
+                    };
+                }
+                return soundcards;
+            }
+        }
+
+        private static Dictionary<string, string> nics;
+        public static Dictionary<string, string> NICs
+        {
+            get
+            {
+                if (nics == null)
+                {
+                    nics = new Dictionary<string, string>()
+                    {
+                        {"vlance"   ,"AMD PCnet-PCI II Am79C970A"},
+                        {"e1000"    ,"Intel E1000"},
+                        {"e1000e"   ,"Intel E1000e"},
+                        {"vmxnet"   ,"VMware VMXNet"},
+                        {"vmxnet3"  ,"VMware VMXNet3"},
+                    };
+                }
+                return nics;
+            }
+        }
+
+        
+        public static string ValueToDescripton(string value)
+        {
+            if (Firmwares.ContainsKey(value))  return Firmwares[value];
+            if (SoundCards.ContainsKey(value)) return SoundCards[value];
+            if (NICs.ContainsKey(value)) return NICs[value];
+            return "";
+        }
+        /*
         public static string DescriptionToValue(string des)
         {
             int index = -1, i;
@@ -356,7 +382,7 @@ namespace VMGuide
 
             return ret;
         }
-
+        */
         public static void SearchVM(ref List<VirtualMachine> VMList)
         {
             /*
@@ -382,8 +408,7 @@ namespace VMGuide
                     name = "pref.mruVM\\d+.filename";
                 }
 
-                if (File.Exists(ConfigFile) == false)
-                { continue; }
+                if (File.Exists(ConfigFile) == false) continue;
                 config = new VMXFile(ConfigFile);
                 values = config.ReadValues(name);
 

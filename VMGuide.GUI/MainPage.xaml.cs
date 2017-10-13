@@ -6,14 +6,19 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Collections.Generic;
 
 namespace VMGuide
 {
     /// <summary>
     /// Page2.xaml 的交互逻辑
     /// </summary>
-    public partial class Main : Page
+    public partial class MainPage : Page
     {
+        public static IEnumerable<String> VMwareFirmwareList => VMware.Firmwares.Keys;
+        public static IEnumerable<String> VMwareSoundCardList => VMware.SoundCards.Keys;
+        public static IEnumerable<String> VMwareNicList => VMware.NICs.Keys;
+
         private static VirtualMachine VM;
 
         //返回当前的虚拟机
@@ -57,7 +62,7 @@ namespace VMGuide
             get { return (VM is VirtualPC_VM); }
         }
         
-        public Main()
+        public MainPage()
         {
             InitializeComponent();
         }
@@ -95,7 +100,7 @@ namespace VMGuide
             if (ComboBoxSel == -1 || ListBoxSel == -1) return;
 
             var list = CurrentVMwareNICs;
-            list[ListBoxSel] = VMware.NICs[ComboBoxSel];
+            list[ListBoxSel] = ((ComboBox)sender).SelectedItem as string ;
             CurrentVMwareNICs = list;
 
             list_nic.ItemsSource = CurrentVMwareNICs;
@@ -138,16 +143,18 @@ namespace VMGuide
          * 所以DateLock只能用事件手动写值
          * 然后DateLock为true的时候再建立与TimeOffest(BIOSDate)的数据绑定
         */
-        private void check_biosdate_Checked(object sender, RoutedEventArgs e)
+        private void CheckBox_biosdate_Checked(object sender, RoutedEventArgs e)
         {
             if (datepicker == null) return;
             CurrentVM.DateLock = true;
-            var binding = new Binding("CurrentVM.BIOSDate");
-            binding.Source = MainPage;
+            var binding = new Binding("CurrentVM.BIOSDate")
+            {
+                Source = page_main
+            };
             datepicker.SetBinding(DatePicker.SelectedDateProperty, binding);
         }
 
-        private void check_biosdate_Unchecked(object sender, RoutedEventArgs e)
+        private void CheckBox_biosdate_Unchecked(object sender, RoutedEventArgs e)
         {
             if (datepicker == null) return;
             BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
@@ -156,13 +163,7 @@ namespace VMGuide
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            check_biosdate.Checked -= check_biosdate_Checked;
-            check_biosdate.Unchecked -= check_biosdate_Unchecked;
-
             check_biosdate.IsChecked = CurrentVM.DateLock;
-
-            check_biosdate.Checked += check_biosdate_Checked;
-            check_biosdate.Unchecked += check_biosdate_Unchecked;
         }
     }
 }
