@@ -4,12 +4,20 @@ using System.Collections.Generic;
 
 namespace VMGuide
 {
+    //虚拟机基类
     public class VirtualMachine
     {
         private string path;
         public string Path { get { return path; } }
         public string Name { get; set; }
 
+        public VirtualMachine(string FilePath = null)
+        {
+            path = FilePath;
+            if (FilePath != null) Name = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+        }
+    
+        //输出设置值
         public virtual void ShowSettings()
         {
             if (Path == null) return;
@@ -22,22 +30,33 @@ namespace VMGuide
 
             Console.WriteLine($"Date Lock\t{DateLock}");
             Console.WriteLine($"BIOS Date\t{BIOSDate.ToShortDateString()}");
-            if (!(this is VirtualPC_VM)) Console.WriteLine($"ACPI Enabled\t{ACPI}");
         }
-
-        public virtual Boolean ACPI { get; set; }
-
+        
         public virtual Boolean DateLock { get; set; }
 
         public virtual DateTime BIOSDate { get; set; }
 
+        //返回当前虚拟机是否已锁定
         public virtual Boolean IsLocked { get { return false; } }
 
-        public VirtualMachine(string FilePath = null)
+    }
+
+    //支持修改ACPI的虚拟机基类
+    public class VirtualMachineWithACPI : VirtualMachine
+    {
+        public VirtualMachineWithACPI(string FilePath) : base(FilePath) { }
+
+        //输出设置值
+        public override void ShowSettings()
         {
-            path = FilePath;
-            if (FilePath != null) Name = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+            if (Path == null) return;
+
+            base.ShowSettings();
+
+            Console.WriteLine($"ACPI Enabled\t{ACPI}");
         }
+
+        public virtual Boolean ACPI { get; set; }
     }
 
     public class Core
@@ -51,6 +70,7 @@ namespace VMGuide
             return ($"VMGuide Core {FileVersion.FileMajorPart}.{FileVersion.FileMinorPart} ({FileVersion.Comments})");
         }
 
+        //搜索虚拟机
         public static List<VirtualMachine> SearchVM()
         {
             var VMList = new List<VirtualMachine>();

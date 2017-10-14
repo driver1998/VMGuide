@@ -96,24 +96,9 @@
 
             <Grid Margin="0,0,0,0" Background="#184689" Grid.Row="1" >
                 <Image x:Name="image" HorizontalAlignment="Left" Width="60" Margin="15,5,0,15" Source="Resources\logo.png"/>
-                <Label x:Name="label" VerticalAlignment="Top" Height="40" Margin="85,5,10,0"  
-                       Foreground="White" FontFamily="Microsoft Yahei Light" VerticalContentAlignment="Center" 
-                       Padding="0" IsEnabled="{Binding ElementName=page_home,Path=IsUnattendMode.Value}">
-                    <Label.Style >
-                        <Style TargetType="Label" >
-                            <Style.Triggers >
-                                <Trigger Property="IsEnabled" Value="true">
-                                    <Setter Property="FontSize" Value="30"/>
-                                    <Setter Property="Content" Value="Importing Settings"/>
-                                </Trigger>
-                                <Trigger Property="IsEnabled" Value="false">
-                                    <Setter Property="FontSize" Value="35"/>
-                                    <Setter Property="Content" Value="Welcome"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Label.Style>
-                </Label>
+                <Label x:Name="label" VerticalAlignment="Top" Height="40" Margin="85,5,10,0" FontSize="35" Content="Welcome"
+                       Foreground="White" FontFamily="Microsoft Yahei Light" VerticalContentAlignment="Center" Padding="0"/>
+
                 <Label x:Name="label1" Margin="85,45,10,15"  Foreground="White" 
                        Content="To Continue, please select a virtual machine."  
                        FontFamily="Microsoft Yahei Light" FontSize="14" 
@@ -122,12 +107,10 @@
 
             <ScrollViewer Margin="50,30,50,30" Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0">
-                    <Grid Margin="5" Visibility="{Binding ElementName=page_home,Path=IsUnattendMode.Value,Converter={StaticResource BooleanToCollapseConverter } }">
+                    <Grid x:Name="grid_unattendMode" Margin="5" Visibility="{Binding ElementName=page_home,Path=IsUnattendMode.Value,Converter={StaticResource BooleanToCollapseConverter}}">
                         <Label x:Name ="ImportPrompt" Content="Importing setting: BIOSDate 20160101" HorizontalAlignment="Left" FontSize="12"/>
                         <Button x:Name="ImportCancel" Style="{StaticResource TextButtonStyle}" Content="Cancel" HorizontalAlignment="Right" HorizontalContentAlignment="Center" Click="ImportCancel_Click"/>
-
                     </Grid>
-
 
                     <Grid x:Name="grid_vpc" Height="Auto" Style="{StaticResource GridList }" 
                           Visibility="{Binding ElementName=listbox_vpc,Path=HasItems,Converter={StaticResource BooleanToCollapseConverter} }">
@@ -162,22 +145,22 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <StackPanel Grid.Row="3" Margin="0,0,0,0" Background="#f2f2f2" Orientation="Horizontal" >
-                <ToggleButton x:Name="settingsToggle" Width="68" Height="48"
-                              HorizontalAlignment="Right" VerticalAlignment="Top" Content="&#xE713;" 
-                              FontSize="18" Style="{StaticResource ToolBarToggleStyle }"
-                              IsHitTestVisible="{Binding ElementName=settingsPopup, Path=IsOpen ,Converter={StaticResource BooleanReverseConverter}}"/>
-                
-                <Button Width="68" Margin="0,0,68,0" 
-                        HorizontalAlignment="Right" Content="&#xE109;"
-                        FontSize="18" Style="{StaticResource ToolBarButtonStyle  }" Click="Button_Click"/>
-            </StackPanel>
-            
+            <Grid  Grid.Row="3" Margin="0,0,0,0" Background="#f2f2f2">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                <Button HorizontalAlignment="Right" Content="&#xE109;" FontSize="18"
+                        Style="{StaticResource ToolBarButtonStyle  }" Click="Button_Click"/>
+                <ToggleButton x:Name="settingsToggle" Content="&#xE713;" Style="{StaticResource ToolBarToggleStyle }" FontSize="18"
+                            IsHitTestVisible="{Binding ElementName=settingsPopup, Path=IsOpen ,Converter={StaticResource BooleanReverseConverter}}"/>
+
+                </StackPanel>
+            </Grid>
+
             <Popup x:Name="settingsPopup" StaysOpen="False"
                    IsOpen="{Binding ElementName=settingsToggle ,Path=IsChecked}"
                    Placement="Top" PlacementTarget="{Binding ElementName=settingsToggle}">
                 
-                <ListBox Width="{Binding ElementName=settingsToggle,Path=Width}">
+                <ListBox Width="{Binding ElementName=settingsToggle,Path=Width}" ItemContainerStyle="{StaticResource MenuListBoxItem}">
                     <ListBoxItem Content="Refresh" MouseUp="RefreshMenuClicked"/>
                     <ListBoxItem Content="About" MouseUp="AboutMenuClicked"/>
                 </ListBox>

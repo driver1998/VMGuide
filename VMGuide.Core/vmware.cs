@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 
 namespace VMGuide
 {
+    //读写VMX配置文件的类
+    //VMX本身是key=value形式的键值对
     public class VMXFile
     {
         private string file;
@@ -57,7 +59,7 @@ namespace VMGuide
 
     }
 
-    public class VMwareVM : VirtualMachine //设置会直接储存
+    public class VMwareVM : VirtualMachineWithACPI //设置会直接储存
     {
         VMXFile VMX;
 
@@ -75,7 +77,7 @@ namespace VMGuide
             base.ShowSettings();
 
             Console.WriteLine("Firmware\t{0}", Firmware.ToUpper());
-            Console.WriteLine("Sound Card\t{0}", SoundCard);
+            Console.WriteLine("Sound Card\t{0}\t{1}", SoundCard, VMware.ValueToDescripton(SoundCard));
             Console.WriteLine();
 
             List<string> NIC = NICs;
@@ -83,7 +85,7 @@ namespace VMGuide
 
             for (int i = 0; i < NIC.Count; i++)
             {
-                Console.WriteLine("\t[{0}]\t{1}", i, NIC[i]);
+                Console.WriteLine("\t[{0}]\t{1}\t{2}", i, NIC[i], VMware.ValueToDescripton(NIC[i]));
             }
         }
 
@@ -250,6 +252,7 @@ namespace VMGuide
             }
         }
 
+        //vmware的BIOSDate保存为unix时间戳
         public override DateTime BIOSDate
         {
             get
@@ -353,36 +356,7 @@ namespace VMGuide
             if (NICs.ContainsKey(value)) return NICs[value];
             return "";
         }
-        /*
-        public static string DescriptionToValue(string des)
-        {
-            int index = -1, i;
-            string ret = des;
 
-            for (i = 0; i < 3; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        index = Array.IndexOf(fw_des, des.ToLower());
-                        if (index != -1) ret = Firmwares[index];
-                        break;
-                    case 1:
-                        index = Array.IndexOf(snd_des, des.ToLower());
-                        if (index != -1) ret = SoundCards[index];
-                        break;
-                    case 2:
-                        index = Array.IndexOf(nic_des, des.ToLower());
-                        if (index != -1) ret = NICs[index];
-                        break;
-                }
-
-                if (index != -1) break;
-            }
-
-            return ret;
-        }
-        */
         public static void SearchVM(ref List<VirtualMachine> VMList)
         {
             /*

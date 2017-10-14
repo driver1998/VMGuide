@@ -15,56 +15,65 @@ namespace VMGuide
     /// </summary>
     public partial class MainPage : Page
     {
-        public static IEnumerable<String> VMwareFirmwareList => VMware.Firmwares.Keys;
-        public static IEnumerable<String> VMwareSoundCardList => VMware.SoundCards.Keys;
-        public static IEnumerable<String> VMwareNicList => VMware.NICs.Keys;
+        public IEnumerable<String> VMwareFirmwareList => VMware.Firmwares.Keys;
+        public IEnumerable<String> VMwareSoundCardList => VMware.SoundCards.Keys;
+        public IEnumerable<String> VMwareNicList => VMware.NICs.Keys;
 
-        private static VirtualMachine VM;
-
-        //返回当前的虚拟机
-        public static VirtualMachine CurrentVM
-        {
-            get { return VM; }
-            set { VM = value; }
-        }
-
-        //返回当前的VMwareVM
-        public static VMwareVM CurrentVMwareVM
+        //当前虚拟机
+        public VirtualMachine CurrentVM { get; set; }
+        public VirtualMachineWithACPI CurrentVirtualMachineWithACPI
         {
             get
             {
-                if (VM is VMwareVM) { return (VMwareVM)VM; } else { return null; }
+                if (CurrentVM is VirtualMachineWithACPI)
+                    return (VirtualMachineWithACPI)CurrentVM;
+                else
+                    return null;
             }
-            set
+        }
+        public VMwareVM CurrentVMwareVM
+        {
+            get
             {
-                if (value is VMwareVM) { VM = value; } else { return; }
+                if (CurrentVM is VMwareVM)
+                    return (VMwareVM)CurrentVM;
+                else
+                    return null;
             }
         }
 
         //当前虚拟机的网卡列表
-        public static ObservableCollection<string> CurrentVMwareNICs
+        public ObservableCollection<string> CurrentVMwareNICs
         {
             get
             {
-                if (VM is VMwareVM) { return new ObservableCollection<string>(((VMwareVM)VM).NICs); } else { return new ObservableCollection<string> (); }
+                if (CurrentVM is VMwareVM)
+                    return new ObservableCollection<string>(((VMwareVM)CurrentVM).NICs);
+                else
+                    return null;
             }
             set
             {
-                if (VM is VMwareVM) { ((VMwareVM)VM).NICs = value.ToList(); } else { return; }
+                if (CurrentVM is VMwareVM)
+                    ((VMwareVM)CurrentVM).NICs = value.ToList();
+                else
+                    return;
             }
         }
-        public static Boolean IsVMware
-        {
-            get { return (VM is VMwareVM); }
-        }
-        public static Boolean IsVirtualPC
-        {
-            get { return (VM is VirtualPC_VM); }
-        }
+
+        public Boolean IsVMware => (CurrentVM is VMwareVM);
+        public Boolean IsVirtualMachineWithACPI => (CurrentVM is VirtualMachineWithACPI);
         
-        public MainPage()
+        public MainPage(VirtualMachine VM)
         {
             InitializeComponent();
+            this.CurrentVM = VM;
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            page_main.DataContext = this;
+            check_biosdate.IsChecked = CurrentVM.DateLock;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -79,8 +88,10 @@ namespace VMGuide
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            VM = null;
-            if (NavigationService.CanGoBack) NavigationService?.GoBack();
+            if (NavigationService.CanGoBack)
+            {
+                NavigationService?.GoBack();
+            }
         }
 
         private void TitleBar_MouseMove(object sender, MouseEventArgs e)
@@ -90,6 +101,8 @@ namespace VMGuide
                 MainWindow.GetWindow(this).DragMove();
             }
         }
+
+        
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -159,11 +172,6 @@ namespace VMGuide
             if (datepicker == null) return;
             BindingOperations.ClearBinding(datepicker, DatePicker.SelectedDateProperty);
             CurrentVM.DateLock = false;
-        }
-
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            check_biosdate.IsChecked = CurrentVM.DateLock;
         }
     }
 }

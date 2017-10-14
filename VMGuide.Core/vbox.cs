@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace VMGuide
 {
-    public class VBoxVM : VirtualMachine
+    public class VBoxVM : VirtualMachineWithACPI
     {
         VBoxXML XML;
 
@@ -43,11 +43,9 @@ namespace VMGuide
 
                 string value; DateTime ret = DateTime.Now;
                 value = XML.ReadAttribute(@"VirtualBox/Machine/Hardware/BIOS/TimeOffset", "value");
-                
+
                 if (double.TryParse(value, out double TimeOffest))
-                {
                     ret = ret.AddMilliseconds(TimeOffest);
-                }
 
                 return ret;
             }
@@ -97,6 +95,7 @@ namespace VMGuide
         }
     }
 
+    //读写VirtualBox相关XML配置文件的类
     public class VBoxXML
     {
         private string path;
@@ -114,7 +113,8 @@ namespace VMGuide
             NamespaceMgr.AddNamespace("v", "http://www.virtualbox.org/");            
         }
 
-        public string XPathConvert(string XPath) //add prefix
+        //不带namespace的路转换为带namespace修饰的路径
+        public string XPathConvert(string XPath)
         {
             if (XPath.Substring(0, 2) == "v:") return XPath;
 
@@ -149,9 +149,7 @@ namespace VMGuide
                 NodeList = XML.SelectNodes(XPath, NamespaceMgr);
 
                 foreach (XmlNode node in NodeList)
-                {
                     list.Add(node.Attributes[name].Value);
-                }
             }
             catch { }
 
@@ -178,18 +176,20 @@ namespace VMGuide
 
             XML.Save(Path);
         }
+
+        //根据一个路径，一路创建一棵树
         private void CreateTree (string XPath)
         {
             char[] s = { '/' };
             var Elements = XPathConvert(XPath).Split(s);
 
-            XmlNode Parent = XML;
+            XmlNode Parent = XML; //从XML的根开始操作
             foreach (string Element in Elements)
             {
                 var Node = Parent.SelectSingleNode(Element, NamespaceMgr);
                 if (Node == null)
                 {
-                    var name = Element.Replace("v:", ""); //Name only, remove prefix
+                    var name = Element.Replace("v:", ""); //CreateNode方法需要的是没有前缀修饰的名字
                     var Child = XML.CreateNode(XmlNodeType.Element, name, "http://www.virtualbox.org/");
                     Parent.AppendChild(Child);
                     Parent = Parent.SelectSingleNode(Element, NamespaceMgr);

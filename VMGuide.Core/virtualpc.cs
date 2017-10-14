@@ -32,7 +32,6 @@ namespace VMGuide
                 }
 
                 var str = XML.ReadValue(XPath);
-                //var value = false;
 
                 if (bool.TryParse(str, out bool value) == false) value = true;
                 value = !value; //value is "time sync enabled", but we need "date lock enabled"
@@ -122,6 +121,7 @@ namespace VMGuide
             }
         }
 
+        //判断是否为Windows Virtual PC
         public bool IsVersion7
         {
             get
@@ -132,6 +132,7 @@ namespace VMGuide
         }
     }
 
+    //读写VirtualPC相关XML配置文件的类
     public class VirtualPC_XML
     {
         private string path;
@@ -180,12 +181,13 @@ namespace VMGuide
             XML.Save(Path);
         }
 
+        //根据一个路径，一路创建一棵树
         private void CreateTree(string XPath)
         {
             char[] s = { '/' };
             var Elements = (XPath).Split(s);
 
-            XmlNode Parent = XML;
+            XmlNode Parent = XML; //从根开始操作
             
             foreach (string Element in Elements)
             {

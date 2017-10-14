@@ -19,8 +19,8 @@ namespace VMGuide
         private ObservableCollection<VirtualMachine> VirtualPC_OC = new ObservableCollection<VirtualMachine>();
         private ObservableCollection<VirtualMachine> VBox_OC = new ObservableCollection<VirtualMachine>();
 
-        private static NotifyChanged<bool> unattend;
-        public static NotifyChanged<Boolean> IsUnattendMode
+        private NotifyChanged<bool> unattend;
+        public NotifyChanged<Boolean> IsUnattendMode
         {
             get
             {
@@ -41,9 +41,6 @@ namespace VMGuide
 
         private void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
-
-
-
             Refresh();
 
             if (IsUnattendMode.Value)
@@ -60,6 +57,8 @@ namespace VMGuide
             listbox_vbox.ItemsSource = VBox_OC;
             listbox_vmx.ItemsSource = VMware_OC;
             listbox_vpc.ItemsSource = VirtualPC_OC;
+
+            grid_unattendMode.DataContext = this;
         }
 
         private void Refresh()
@@ -93,11 +92,16 @@ namespace VMGuide
         private void VMLists_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (((ListBox)sender).SelectedItem == null) return;
-            OpenVM ( (VirtualMachine)((ListBox)sender).SelectedItem );
+
+            var item = ((ListBox)sender).SelectedItem;
 
             ((ListBox)sender).SelectionChanged -= VMLists_SelectionChanged;
             ((ListBox)sender).SelectedItem = null;
             ((ListBox)sender).SelectionChanged += VMLists_SelectionChanged;
+
+            OpenVM ((VirtualMachine)item);
+
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -159,8 +163,7 @@ namespace VMGuide
                 }
             }
 
-            MainPage.CurrentVM = VM;
-            NavigationService?.Navigate(new Uri("mainpage.xaml", UriKind.Relative));
+            NavigationService?.Navigate(new MainPage(VM));
 
             if (IsUnattendMode.Value)
             {

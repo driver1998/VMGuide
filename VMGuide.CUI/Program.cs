@@ -233,13 +233,16 @@ namespace VMGuide
                     case "acpi":
                         if (bool.TryParse(value, out bool ACPI_Val))
                         {
-                            CurrentVM.ACPI = ACPI_Val;
+                            //Virtual PC暂不支持ACPI设置
+                            if (CurrentVM is VirtualMachineWithACPI)
+                                ((VirtualMachineWithACPI)CurrentVM).ACPI = ACPI_Val;
+
                             ret = Errors.Complete;
                         }
                         break;
 
                     case "firmware":
-                        if (CurrentVM is VMwareVM && Array.IndexOf (VMware.Firmwares, value) != -1)
+                        if (CurrentVM is VMwareVM && VMware.Firmwares.ContainsKey(value))
                         {
                             ((VMwareVM)CurrentVM).Firmware = value;
                             ret = Errors.Complete;
@@ -247,7 +250,7 @@ namespace VMGuide
                         break;
 
                     case "sound":
-                        if (CurrentVM is VMwareVM && Array.IndexOf(VMware.SoundCards, value) != -1)
+                        if (CurrentVM is VMwareVM && VMware.SoundCards.ContainsKey(value))
                         {
                             ((VMwareVM)CurrentVM).SoundCard = value;
                             ret = Errors.Complete;
@@ -262,7 +265,7 @@ namespace VMGuide
                             var nic = new List<string>();
                             foreach (string s in split)
                             {
-                                if (s == "none" || Array.IndexOf(VMware.NICs, s) == -1) continue;
+                                if (s == "none" || !VMware.NICs.ContainsKey(s)) continue;
                                 nic.Add(s);
                             }
                             ((VMwareVM)CurrentVM).NICs = nic;

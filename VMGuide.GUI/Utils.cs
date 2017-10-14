@@ -114,7 +114,8 @@ namespace VMGuide
                     VM.DateLock = booleanValue;
                     break;
                 case TYPE_ACPI:
-                    VM.ACPI = booleanValue;
+                    if (VM is VirtualMachineWithACPI)
+                        ((VirtualMachineWithACPI)VM).ACPI = booleanValue;
                     break;
                 case TYPE_BIOSDATE:
                     VM.BIOSDate = dateTimeValue;
