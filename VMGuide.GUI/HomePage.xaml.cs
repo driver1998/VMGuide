@@ -160,6 +160,7 @@ namespace VMGuide
                 catch (UnauthorizedAccessException e)
                 {
                     MessageBox.Show(e.Message, "VMGuide", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
             }
 
