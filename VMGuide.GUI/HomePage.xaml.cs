@@ -192,8 +192,8 @@ namespace VMGuide
             var FileVersion = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileVersionInfo;
 
 
-            MessageBox.Show($"VMGuide\t{FileVersion.FileMajorPart}.{FileVersion.FileMinorPart} ({FileVersion.Comments})" +
-                $"\n\n{FileVersion.LegalCopyright}","VMGuide",MessageBoxButton.OK ,MessageBoxImage.Information);
+            MessageBox.Show($"VMGuide {FileVersion.FileMajorPart}.{FileVersion.FileMinorPart} ({FileVersion.Comments})" +
+                $"\n{Core.GetCoreVersion()}\n\n{FileVersion.LegalCopyright}","VMGuide",MessageBoxButton.OK ,MessageBoxImage.Information);
         }
     }
 

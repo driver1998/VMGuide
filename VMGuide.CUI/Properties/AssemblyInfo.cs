@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("VMGuide CUI")]
-[assembly: AssemblyDescription("Build 20170312")]
+[assembly: AssemblyDescription("Build 20200304")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("VMGuide CUI")]
-[assembly: AssemblyCopyright("Copyright (c) 2010-2017 driver1998")]
+[assembly: AssemblyCopyright("Copyright (c) 2010-2020 driver1998")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
