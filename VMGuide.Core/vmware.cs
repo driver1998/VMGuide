@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 
@@ -11,31 +12,54 @@ namespace VMGuide
     public class VMXFile
     {
         private string file;
-        private string path;
-
-        public string Path { get { return path; } }
+        private Encoding encoding;
+        public string Path { get; private set; }
         
-        public VMXFile(string FilePath)
+        public VMXFile(string filePath)
         {
-            path = FilePath;
-            file = File.ReadAllText(FilePath);
+            Path = filePath;
+            encoding = DetectEncoding(filePath);
+            System.Diagnostics.Debug.WriteLine(Path, encoding);
+            file = File.ReadAllText(filePath, encoding);
         }
 
+        private Encoding DetectEncoding(string filePath)
+        {
+            var stream = File.OpenRead(filePath);
+            var streamReader = new StreamReader(stream);
+            file = streamReader.ReadLine();
+            stream.Close();
+
+            var encodingName = ReadValue(".encoding");
+            Console.WriteLine(encodingName);
+
+            Encoding encoding;
+            try
+            {
+                encoding = Encoding.GetEncoding(encodingName);
+            }
+            catch (ArgumentException)
+            {
+                encoding = Encoding.UTF8;
+            }
+
+            return encoding;
+
+        }
         public string ReadValue(string key)
         {
-            Regex regex = new Regex(".*?" + key + ".*?=\\s*\"+(.*?)\\s*\"+\\r\\n", RegexOptions.IgnoreCase);
-            return (regex.Match(file).Groups[1].Value);
+            Regex regex = new Regex(key + "\\s+?=\\s+?\"(.*?)\"", RegexOptions.IgnoreCase);
+            return (regex.Match(file)?.Groups[1]?.Value);
         }
         public List<string> ReadValues(string key)
         {
-            Regex regex = new Regex(".*?" + key + ".*?=\\s*\"+(.*?)\\s*\"+\\r\\n", RegexOptions.IgnoreCase);
+            Regex regex = new Regex(key + "\\s+?=\\s+?\"(.*?)\"", RegexOptions.IgnoreCase);
             List<string> ret = new List<string>();
             MatchCollection matches = regex.Matches(file);
 
-            for (int i = 0; i < matches.Count; i++)
-            {
-                ret.Add(matches[i].Groups[1].Value);
-            }
+            foreach (Match match in matches)
+                ret.Add(match.Groups[1]?.Value);
+
             return (ret);
         }
         public void WriteValue(string key, string value)
@@ -54,7 +78,7 @@ namespace VMGuide
                 file = regex.Replace(file, "$1\"" + value.ToLower() + "\"" + Environment.NewLine);
             }
 
-            File.WriteAllText(Path, file);
+            File.WriteAllText(Path, file, encoding);
         }
 
     }
